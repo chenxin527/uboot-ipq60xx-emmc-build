@@ -382,7 +382,7 @@ int gl_uip_command(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]){
     uip_main();
   }
   else
-    printf("Usage:\n\n use\"help dhcpd\"\n");
+    printf("Usage:\n\n use\"dhcpd start\"\n");
   return 0;
 }
 U_BOOT_CMD(dhcpd, 2, 1, gl_uip_command, "start dhcpd server\n", NULL);
