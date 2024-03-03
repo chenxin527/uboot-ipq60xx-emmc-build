@@ -158,7 +158,7 @@ static int httpd_findandstore_firstchunk(void){
 
 				if(end){
 #if defined(WEBFAILSAFE_DISABLE_ART_UPGRADE)
-					printf("## Error: U-Boot upgrade is not allowed on this board!\n");
+					printf("## Error: ART upgrade is not allowed on this board!\n");
 					webfailsafe_upload_failed = 1;
 #else
 					printf("Upgrade type: ART\n");
