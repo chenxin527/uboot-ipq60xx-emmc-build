@@ -196,7 +196,7 @@ static int httpd_findandstore_firstchunk(void){
 				// U-Boot
 				if((webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UBOOT) && (hs->upload_total > WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES)){
 
-					printf("## Error: file too big!\n");
+					printf("## Error: wrong file size, should be: %d bytes!\n", WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES);
 					webfailsafe_upload_failed = 1;
 					file_too_big = 1;
 
