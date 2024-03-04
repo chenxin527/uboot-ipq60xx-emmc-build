@@ -1334,10 +1334,11 @@ $(version_h): include/config/uboot.release FORCE
 
 $(timestamp_h): $(srctree)/Makefile FORCE
 	$(call filechk,timestamp.h)
-	sed -i "s/version:.*</version:`date +%y.%m.%d`</g" $(CURDIR)/httpd/vendors/cleanwrt/uboot.html
-	sed -i "s/version:.*</version:`date +%y.%m.%d`</g" $(CURDIR)/httpd/vendors/cleanwrt/art.html
-	sed -i "s/version:.*</version:`date +%y.%m.%d`</g" $(CURDIR)/httpd/vendors/cleanwrt/index.html
-	sed -i "s/version:.*</version:`date +%y.%m.%d`</g" $(CURDIR)/httpd/vendors/cleanwrt/flashing.html
+	sed -i "s/version:.*</version:`date +%4Y.%m.%d_%H:%M:%S`</g" $(CURDIR)/httpd/vendors/cleanwrt/gpt.html
+	sed -i "s/version:.*</version:`date +%4Y.%m.%d_%H:%M:%S`</g" $(CURDIR)/httpd/vendors/cleanwrt/uboot.html
+	sed -i "s/version:.*</version:`date +%4Y.%m.%d_%H:%M:%S`</g" $(CURDIR)/httpd/vendors/cleanwrt/art.html
+	sed -i "s/version:.*</version:`date +%4Y.%m.%d_%H:%M:%S`</g" $(CURDIR)/httpd/vendors/cleanwrt/index.html
+	sed -i "s/version:.*</version:`date +%4Y.%m.%d_%H:%M:%S`</g" $(CURDIR)/httpd/vendors/cleanwrt/flashing.html
 	cd $(srctree)/httpd; ./vendors/makefsdatac; cd -
 
 # ---------------------------------------------------------------------------

@@ -166,9 +166,22 @@ static int httpd_findandstore_firstchunk(void){
 #endif /* if defined(WEBFAILSAFE_DISABLE_ART_UPGRADE) */
 				} else {
 
-					printf("## Error: input name not found!\n");
-					return(0);
+					end = (char *)strstr((char *)start, "name=\"gpt\"");
 
+					if(end){
+#if defined(WEBFAILSAFE_DISABLE_GPT_UPGRADE)
+						printf("## Error: GPT upgrade is not allowed on this board!\n");
+						webfailsafe_upload_failed = 1;
+#else
+						printf("Upgrade type: GPT\n");
+						webfailsafe_upgrade_type = WEBFAILSAFE_UPGRADE_TYPE_GPT;
+#endif /* if defined(WEBFAILSAFE_DISABLE_GPT_UPGRADE) */
+					} else {
+
+						printf("## Error: input name not found!\n");
+						return(0);
+
+					}
 				}
 			}
 		}
@@ -215,6 +228,16 @@ static int httpd_findandstore_firstchunk(void){
 
 				// 	printf("## Error: file too big!\n");
 				// 	webfailsafe_upload_failed = 1;
+				
+				// GPT
+				}
+				else if((webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_GPT)
+						&& (hs->upload_total > WEBFAILSAFE_UPLOAD_GPT_SIZE_IN_BYTES)
+						){
+
+					printf("## Error: wrong file size, should be: %d bytes!\n", WEBFAILSAFE_UPLOAD_GPT_SIZE_IN_BYTES);
+					webfailsafe_upload_failed = 1;
+					file_too_big = 1;
 
 				}
 

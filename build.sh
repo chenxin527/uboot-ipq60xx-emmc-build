@@ -16,6 +16,6 @@ echo "Convert elf to mbn"
 python2.7 scripts_mbn/elftombn.py -f ./u-boot -o ./u-boot.mbn -v 6
 
 echo "Copy u-boot.mbn to root directory"
-mv ./u-boot.mbn ../u-boot.mbn
+mv ./u-boot.mbn ../u-boot.bin
 
 echo "Done!"

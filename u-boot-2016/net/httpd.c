@@ -190,7 +190,7 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 		}else if(check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_UBI){
 			printf("\n\n****************************\n*    FIRMWARE UPGRADING    *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
 			sprintf(buf, "nand erase 0xa00000 0x7300000; nand write 0x%lx 0xa00000 0x%lx", (unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS, (unsigned long int)size);
-		}else{
+		}else {
 			return(-1);
 		}
 	} else if(upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_ART){
@@ -214,6 +214,15 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
 				(unsigned long int)WEBFAILSAFE_UPLOAD_ART_ADDRESS,
 				(unsigned long int)size);
+		}
+	} else if(upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_GPT){
+		printf("\n\n****************************\n*      GPT  UPGRADING      *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
+		if(qca_smem_flash_info.flash_type==5){
+			sprintf(buf,"mmc dev 0 && mmc erase 0x0 0x22 && mmc write 0x%lx 0x0 0x22",
+				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS));
+		}else {
+			printf("\n\n* ONLY eMMC DEVICE CAN UPGRADE GPT!! *\n\n");
+			return(-1);
 		}
 	}
 	else {
