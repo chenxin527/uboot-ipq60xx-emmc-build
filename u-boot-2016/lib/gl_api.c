@@ -44,9 +44,9 @@ void check_button_is_press(void)
 			printf("Reset button is pressed for: %2d ", counter);
 		
 		gpio_set_value(GPIO_RED_LED, 0);
-		mdelay(500);
+		mdelay(350);
 		gpio_set_value(GPIO_RED_LED, 1);
-		mdelay(500);
+		mdelay(350);
 
 		counter++;
 
