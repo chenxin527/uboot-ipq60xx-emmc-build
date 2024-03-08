@@ -640,6 +640,10 @@ int smem_get_boot_flash(uint32_t *flash_type,
 
 	ret = smem_read_alloc_entry(SMEM_BOOT_FLASH_TYPE,
 				    flash_type, sizeof(uint32_t));
+	//如果需要在USB 9008救砖模式下使用uboot webui，需要屏蔽上面两行并取消屏蔽两行，来指定flash type
+	//ret = 0;
+	//*flash_type = SMEM_BOOT_MMC_FLASH;
+	//为了在USB 9008模式救砖时可以直接认为MMC，以便启动httpd，直接将*flash_type = SMEM_BOOT_NO_FLASH
 	if (ret != 0) {
 		printf("smem: read flash type failed\n");
 		*flash_type = SMEM_BOOT_NO_FLASH;
