@@ -99,8 +99,7 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 	//printf checksum if defined
 	printChecksumMd5(WEBFAILSAFE_UPLOAD_RAM_ADDRESS,size);
 
-	if(upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UBOOT){
-		printf("\n\n****************************\n*     U-BOOT UPGRADING     *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
+	if (upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_FIRMWARE) {
 		//arch/arm/include/asm/arch-qca-common/smem.h
 		//SMEM_BOOT_NO_FLASH        = 0,
 		//SMEM_BOOT_NOR_FLASH       = 1,
@@ -111,12 +110,93 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 		//SMEM_BOOT_SPI_FLASH       = 6,
 		//SMEM_BOOT_NORPLUSNAND     = 7,
 		//SMEM_BOOT_NORPLUSEMMC     = 8,
-		if(qca_smem_flash_info.flash_type==5){
+		if (qca_smem_flash_info.flash_type==5) {
+			//include/gl_api.h
+			//FW_TYPE_NOR	0 这个是factory.bin固件
+			//FW_TYPE_EMMC	1 这个是GPT文件或者EMMC镜像，只要开头有GPT信息即可
+			//FW_TYPE_QSDK	2 这个是官方原厂固件
+			//FW_TYPE_UBI	3 这个是UBI固件，EMMC没有UBI固件
+			//check_fw_type 只检查文件的开头几个特殊magic num
+			if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_NOR) {
+				printf("\n\n******************************\n* Factory FIRMWARE UPGRADING *\n*  DO NOT POWER OFF DEVICE!  *\n******************************\n\n");
+				sprintf(buf,"mw 0x%lx 0x00 0x200 && mmc dev 0 && flash 0:HLOS 0x%lx 0x%lx && flash rootfs 0x%lx 0x%lx && mmc read 0x%lx 0x622 0x200 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && flash 0:BOOTCONFIG 0x%lx 0x40000 && flash 0:BOOTCONFIG1 0x%lx 0x40000",
+					//mw 0x%lx 0x00 0x200 擦除内存中上传文件后面的512字节，防止文件不够512字节写入文件后其他字符到EMMC
+					//其实测试不擦除文件后内存，写入一些其他字符也可以正常启动
+					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+size),
+					//factory.bin由kernel+rootfs组成，其中kernel固定6MB大小
+					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+					(unsigned long int)0x600000,
+					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x600000),
+					(unsigned long int)(size-0x600000),
+					//这部分改两个BOOTCONFIG，启动系统0，即rootfs
+					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x80),
+					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x94),
+					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0xA8),
+					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS);
+			} else if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_QSDK) {
+				printf("\n\n*******************************\n* Original FIRMWARE UPGRADING *\n*   DO NOT POWER OFF DEVICE!  *\n*******************************\n\n");
+				sprintf(buf,"imxtract 0x%lx hlos-0cc33b23252699d495d79a843032498bfa593aba && mmc dev 0 && flash 0:HLOS $fileaddr $filesize && imxtract 0x%lx rootfs-f3c50b484767661151cfb641e2622703e45020fe && flash rootfs $fileaddr $filesize && imxtract 0x%lx wififw-45b62ade000c18bfeeb23ae30e5a6811eac05e2f && flash 0:WIFIFW $fileaddr $filesize && mmc read 0x%lx 0x622 0x200 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && flash 0:BOOTCONFIG 0x%lx 0x40000 && flash 0:BOOTCONFIG1 0x%lx 0x40000",
+					//官方固件本身各个固件后面有填充0，所以不用修改上传文件后的内存
+					//执行imxtract时不带目标地址，则不进行复制，但会修改环境变量$fileaddr $filesize，可以直接用
+					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+					//这部分改两个BOOTCONFIG，启动系统0，即rootfs
+					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x80),
+					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x94),
+					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0xA8),
+					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS);
+			} else {
+				printf("\n\n* The upload file is NOT supported FIRMWARE!! *\n\n");
+				return(-1);
+			}
+		} else {
+			if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_NOR) {
+				//GL-AX1800 GL-AXT1800固件在nor的情况，不会发生
+				printf("\n\n****************************\n*    FIRMWARE UPGRADING    *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
+				sprintf(buf,
+					"sf probe && sf update 0x%lx 0x%lx 0x%lx",
+					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+					(unsigned long int)WEBFAILSAFE_UPLOAD_FW_ADDRESS,
+					(unsigned long int)size);
+			} else if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_EMMC) {
+				//GL-AX1800 GL-AXT1800固件为emmc mbr分区的情况，不会发生
+				printf("\n\n****************************\n*    FIRMWARE UPGRADING    *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
+				printf("\n\n* NOT SUPPORT UPDATE EMMC IMAGE HERE!! *\n\n");
+				return(-1);
+				//sprintf(buf,
+						//"mmc dev 0 && mmc erase 0 0x109800 && mmc write 0x%lx 0x%lx 0x%lx",
+						//(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+						//(unsigned long int)0x0,
+						//(unsigned long int)(size/512+1));
+			} else if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_QSDK) {
+				printf("\n\n****************************\n*    FIRMWARE UPGRADING    *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
+				sprintf(buf, "sf probe; imgaddr=0x%lx && source $imgaddr:script", (unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS);
+			} else if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_UBI) {
+				printf("\n\n****************************\n*    FIRMWARE UPGRADING    *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
+				sprintf(buf, "nand erase 0xa00000 0x7300000; nand write 0x%lx 0xa00000 0x%lx", (unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS, (unsigned long int)size);
+			} else {
+				printf("\n\n* The upload file is NOT supported FIRMWARE!! *\n\n");
+				return(-1);
+			}
+		}
+	} else if (upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UBOOT) {
+		printf("\n\n****************************\n*     U-BOOT UPGRADING     *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
+		if (qca_smem_flash_info.flash_type==5) {
+			if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_ELF) {
 			//mw 0x%lx 0x00 0x200 擦除内存中上传文件后面的512字节，防止文件不够512字节写入文件后其他字符到eMMC
 			//其实测试不擦除文件后内存，写入一些其他字符也可以正常启动
-			sprintf(buf,"mmc dev 0 && mw 0x%lx 0x00 0x200 && flash 0:APPSBL && flash 0:APPSBL_1",
+			sprintf(buf,"mw 0x%lx 0x00 0x200 && mmc dev 0 && flash 0:APPSBL && flash 0:APPSBL_1",
 				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+size));
-		}else if(qca_smem_flash_info.flash_type==2){
+			} else {
+				printf("\n\n* The upload file is NOT supported UBOOT ELF!! *\n\n");
+				return(-1);
+			}
+		} else if (qca_smem_flash_info.flash_type==2) {
 			sprintf(buf,
 				"nand erase 0x%lx 0x%lx; nand write 0x%lx 0x%lx 0x%lx",
 				(unsigned long int)WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS_NAND,
@@ -124,83 +204,24 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
 				(unsigned long int)WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS_NAND,
 				(unsigned long int)((size/131072+(size%131072!=0))*131072));
-		}else if(qca_smem_flash_info.flash_type==6){
+		} else if (qca_smem_flash_info.flash_type==6) {
 			sprintf(buf,
 				"sf probe && sf update 0x%lx 0x%lx 0x%lx",
 				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
 				(unsigned long int)WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS,
 				(unsigned long int)size);
-		}
-	} else if(upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_FIRMWARE){
-		//include/gl_api.h
-		//FW_TYPE_NOR	0 这个是刷写固件分区，factory固件
-		//FW_TYPE_EMMC	1 这个是刷写eMMC镜像，不是刷写固件分区
-		//FW_TYPE_QSDK	2 这个官方原厂固件img
-		//FW_TYPE_UBI	3
-		if(check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_NOR){
-			//固件在nor的情况，不会发生
-			printf("\n\n****************************\n*    FIRMWARE UPGRADING    *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
-			sprintf(buf,"mmc dev 0 && mw 0x%lx 0x00 0x200 && flash 0:HLOS 0x%lx 0x%lx && flash rootfs 0x%lx 0x%lx && mmc read 0x%lx 0x622 0x200 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && flash 0:BOOTCONFIG 0x%lx 0x40000 && flash 0:BOOTCONFIG1 0x%lx 0x40000",
-				//mw 0x%lx 0x00 0x200 擦除内存中上传文件后面的512字节，防止文件不够512字节写入文件后其他字符到eMMC
-				//其实测试不擦除文件后内存，写入一些其他字符也可以正常启动
-				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+size),
-				//factory.bin由kernel+rootfs组成，其中kernel固定6MB大小
-				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-				(unsigned long int)0x600000,
-				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x600000),
-				(unsigned long int)(size-0x600000),
-				//这部分改两个BOOTCONFIG，启动系统0，即rootfs
-				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x80),
-				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x94),
-				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0xA8),
-				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS);
-			//sprintf(buf,
-				//"sf probe && sf update 0x%lx 0x%lx 0x%lx",
-				//(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-				//(unsigned long int)WEBFAILSAFE_UPLOAD_FW_ADDRESS,
-				//(unsigned long int)size);
-		}else if(check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_EMMC){
-			//固件为emmc mbr分区的情况，不会发生
-			printf("\n\n****************************\n*    FIRMWARE UPGRADING    *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
-			printf("\n\n* DO NOT SUPPORT eMMC IMAGE!! *\n\n");
-			return(-1);
-			//sprintf(buf,
-				//"mmc dev 0 && mmc erase 0 0x109800 && mmc write 0x%lx 0x%lx 0x%lx",
-				//(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-				//(unsigned long int)0x0,
-				//(unsigned long int)(size/512+1));
-		}else if(check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_QSDK){
-			printf("\n\n****************************\n*    FIRMWARE UPGRADING    *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
-			sprintf(buf,"mmc dev 0 && imxtract 0x%lx hlos-0cc33b23252699d495d79a843032498bfa593aba && flash 0:HLOS $fileaddr $filesize && imxtract 0x%lx rootfs-f3c50b484767661151cfb641e2622703e45020fe && flash rootfs $fileaddr $filesize && imxtract 0x%lx wififw-45b62ade000c18bfeeb23ae30e5a6811eac05e2f && flash 0:WIFIFW $fileaddr $filesize && mmc read 0x%lx 0x622 0x200 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && flash 0:BOOTCONFIG 0x%lx 0x40000 && flash 0:BOOTCONFIG1 0x%lx 0x40000",
-				//官方固件本身各个固件后面有填充0，所以不用修改上传文件后的内存
-				//执行imxtract时不带目标地址，则不进行复制，但会修改环境变量$fileaddr $filesize，可以直接用
-				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-				//这部分改两个BOOTCONFIG，启动系统0，即rootfs
-				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x80),
-				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x94),
-				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0xA8),
-				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS);
-			//*sprintf(buf, "sf probe; imgaddr=0x%lx && source $imgaddr:script", (unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS);
-		}else if(check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_UBI){
-			printf("\n\n****************************\n*    FIRMWARE UPGRADING    *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
-			sprintf(buf, "nand erase 0xa00000 0x7300000; nand write 0x%lx 0xa00000 0x%lx", (unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS, (unsigned long int)size);
-		}else {
+		} else {
+			printf("\n\n* Update U-boot is NOT supported for this FLASH TYPE yet!! *\n\n");
 			return(-1);
 		}
-	} else if(upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_ART){
+	} else if (upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_ART) {
 		// TODO: add option to change ART partition offset,
 		// for those who want to use OFW on router with replaced/bigger FLASH
 		printf("\n\n****************************\n*      ART  UPGRADING      *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
-		if(qca_smem_flash_info.flash_type==5){
-			sprintf(buf,"mmc dev 0 && mw 0x%lx 0x00 0x200 && flash 0:ART",
+		if (qca_smem_flash_info.flash_type==5) {
+			sprintf(buf,"mw 0x%lx 0x00 0x200 && mmc dev 0 && flash 0:ART",
 				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+size));
-		}else if(qca_smem_flash_info.flash_type==2){
+		} else if (qca_smem_flash_info.flash_type==2) {
 			sprintf(buf,
 				"nand erase 0x%lx 0x%lx; nand write 0x%lx 0x%lx 0x%lx",
 				(unsigned long int)WEBFAILSAFE_UPLOAD_ART_ADDRESS_NAND,
@@ -208,24 +229,49 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
 				(unsigned long int)WEBFAILSAFE_UPLOAD_ART_ADDRESS_NAND,
 				(unsigned long int)((size/131072+(size%131072!=0))*131072));
-		}else if(qca_smem_flash_info.flash_type==6){
+		} else if (qca_smem_flash_info.flash_type==6) {
 			sprintf(buf,
 				"sf probe && sf update 0x%lx 0x%lx 0x%lx",
 				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
 				(unsigned long int)WEBFAILSAFE_UPLOAD_ART_ADDRESS,
 				(unsigned long int)size);
-		}
-	} else if(upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_GPT){
-		printf("\n\n****************************\n*      GPT  UPGRADING      *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
-		if(qca_smem_flash_info.flash_type==5){
-			sprintf(buf,"mmc dev 0 && mmc erase 0x0 0x22 && mmc write 0x%lx 0x0 0x22",
-				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS));
-		}else {
-			printf("\n\n* ONLY eMMC DEVICE CAN UPGRADE GPT!! *\n\n");
+		} else {
+			printf("\n\n* Update ART is NOT supported for this FLASH TYPE yet!! *\n\n");
 			return(-1);
 		}
-	}
-	else {
+	} else if (upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_IMG) {
+		printf("\n\n****************************\n*      IMG  UPGRADING      *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
+		if (qca_smem_flash_info.flash_type==5) {
+			if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_EMMC) {
+			sprintf(buf,
+				"mmc dev 0 && mmc erase 0x0 0x%lx && mmc write 0x%lx 0x0 0x%lx",
+				(unsigned long int)((size-1)/512+1),
+				(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+				(unsigned long int)((size-1)/512+1));
+			} else {
+				printf("\n\n* The upload file is NOT supported EMMC IMG!! *\n\n");
+				return(-1);
+			}
+		} else {
+			printf("\n\n* Update IMG is NOT supported for this FLASH TYPE yet!! *\n\n");
+			return(-1);
+		}
+	} else if (upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_CDT) {
+		printf("\n\n****************************\n*      CDT  UPGRADING      *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
+		if (qca_smem_flash_info.flash_type==5) {
+			if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_CDT) {
+			sprintf(buf,"mw 0x%lx 0x00 0x200 && mmc dev 0 && flash 0:CDT && flash 0:CDT_1",
+				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+size));
+			} else {
+				printf("\n\n* The upload file is NOT supported CDT!! *\n\n");
+				return(-1);
+			}
+		} else {
+			printf("\n\n* Update CDT is NOT supported for this FLASH TYPE yet!! *\n\n");
+			return(-1);
+		}
+	} else {
+		printf("\n\n* NOT supported WEBFAILSAFE UPGRADE TYPE!! *\n\n");
 		return(-1);
 	}
 

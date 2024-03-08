@@ -20,7 +20,8 @@ void check_button_is_press(void);
 #define WEBFAILSAFE_UPGRADE_TYPE_FIRMWARE	0
 #define WEBFAILSAFE_UPGRADE_TYPE_UBOOT		1
 #define WEBFAILSAFE_UPGRADE_TYPE_ART		2
-#define WEBFAILSAFE_UPGRADE_TYPE_GPT		3
+#define WEBFAILSAFE_UPGRADE_TYPE_IMG		3
+#define WEBFAILSAFE_UPGRADE_TYPE_CDT		4
 
 #define CONFIG_LOADADDR                                 0x44000000
 #define WEBFAILSAFE_UPLOAD_RAM_ADDRESS                  0x44000000
@@ -37,7 +38,7 @@ void check_button_is_press(void);
 
 #define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES          (640*1024)
 #define WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES            (256*1024)
-#define WEBFAILSAFE_UPLOAD_GPT_SIZE_IN_BYTES            (17*1024)
+#define WEBFAILSAFE_UPLOAD_CDT_SIZE_IN_BYTES            (256*1024)
 
 #define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES_NAND     (1536*1024)
 #define WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES_NAND       (512*1024)
@@ -46,6 +47,8 @@ void check_button_is_press(void);
 #define FW_TYPE_EMMC 1
 #define FW_TYPE_QSDK 2
 #define FW_TYPE_UBI 3
+#define FW_TYPE_CDT 4
+#define FW_TYPE_ELF 5
 
 int check_test(void);
 int check_config(void);

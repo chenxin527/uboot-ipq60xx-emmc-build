@@ -166,20 +166,34 @@ static int httpd_findandstore_firstchunk(void){
 #endif /* if defined(WEBFAILSAFE_DISABLE_ART_UPGRADE) */
 				} else {
 
-					end = (char *)strstr((char *)start, "name=\"gpt\"");
+					end = (char *)strstr((char *)start, "name=\"img\"");
 
 					if(end){
-#if defined(WEBFAILSAFE_DISABLE_GPT_UPGRADE)
-						printf("## Error: GPT upgrade is not allowed on this board!\n");
+#if defined(WEBFAILSAFE_DISABLE_IMG_UPGRADE)
+						printf("## Error: IMG upgrade is not allowed on this board!\n");
 						webfailsafe_upload_failed = 1;
 #else
-						printf("Upgrade type: GPT\n");
-						webfailsafe_upgrade_type = WEBFAILSAFE_UPGRADE_TYPE_GPT;
-#endif /* if defined(WEBFAILSAFE_DISABLE_GPT_UPGRADE) */
+						printf("Upgrade type: IMG\n");
+						webfailsafe_upgrade_type = WEBFAILSAFE_UPGRADE_TYPE_IMG;
+#endif /* if defined(WEBFAILSAFE_DISABLE_IMG_UPGRADE) */
 					} else {
 
-						printf("## Error: input name not found!\n");
-						return(0);
+						end = (char *)strstr((char *)start, "name=\"cdt\"");
+
+						if(end){
+#if defined(WEBFAILSAFE_DISABLE_CDT_UPGRADE)
+							printf("## Error: CDT upgrade is not allowed on this board!\n");
+							webfailsafe_upload_failed = 1;
+#else
+							printf("Upgrade type: CDT\n");
+							webfailsafe_upgrade_type = WEBFAILSAFE_UPGRADE_TYPE_CDT;
+#endif /* if defined(WEBFAILSAFE_DISABLE_CDT_UPGRADE) */
+						} else {
+
+							printf("## Error: input name not found!\n");
+							return(0);
+
+						}
 
 					}
 				}
@@ -209,7 +223,7 @@ static int httpd_findandstore_firstchunk(void){
 				// U-Boot
 				if((webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UBOOT) && (hs->upload_total > WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES)){
 
-					printf("## Error: wrong file size, should be: %d bytes!\n", WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES);
+					printf("## Error: wrong file size, should be less than or equal to: %d bytes!\n", WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES);
 					webfailsafe_upload_failed = 1;
 					file_too_big = 1;
 
@@ -219,7 +233,7 @@ static int httpd_findandstore_firstchunk(void){
 						&& (hs->upload_total > WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES)
 						){
 
-					printf("## Error: wrong file size, should be: %d bytes!\n", WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES);
+					printf("## Error: wrong file size, should be less than or equal to: %d bytes!\n", WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES);
 					webfailsafe_upload_failed = 1;
 					file_too_big = 1;
 
@@ -229,13 +243,13 @@ static int httpd_findandstore_firstchunk(void){
 				// 	printf("## Error: file too big!\n");
 				// 	webfailsafe_upload_failed = 1;
 				
-				// GPT
+				// CDT
 				}
-				else if((webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_GPT)
-						&& (hs->upload_total > WEBFAILSAFE_UPLOAD_GPT_SIZE_IN_BYTES)
+				else if((webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_CDT)
+						&& (hs->upload_total > WEBFAILSAFE_UPLOAD_CDT_SIZE_IN_BYTES)
 						){
 
-					printf("## Error: wrong file size, should be: %d bytes!\n", WEBFAILSAFE_UPLOAD_GPT_SIZE_IN_BYTES);
+					printf("## Error: wrong file size, should be less than or equal to: %d bytes!\n", WEBFAILSAFE_UPLOAD_CDT_SIZE_IN_BYTES);
 					webfailsafe_upload_failed = 1;
 					file_too_big = 1;
 

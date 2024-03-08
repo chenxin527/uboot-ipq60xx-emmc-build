@@ -15,5 +15,6 @@ The uboot binary will be: uboot-ipq60xx-build/u-boot.bin
 The uboot failsafe HTTP server ip: 192.168.1.1  
 Update firmware: http://192.168.1.1  
 Update ART: http://192.168.1.1/art.html  
-Update GPT: http://192.168.1.1/gpt.html  
+Update CDT: http://192.168.1.1/cdt.html  
+Update IMG: http://192.168.1.1/img.html  
 Update U-BOOT: http://192.168.1.1/uboot.html  
