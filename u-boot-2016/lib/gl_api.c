@@ -1,27 +1,82 @@
 #include <common.h>
 #include <gl_api.h>
 #include <asm/gpio.h>
+#include <fdtdec.h>
 
-void led_toggle(unsigned int gpio)
+DECLARE_GLOBAL_DATA_PTR;
+
+void led_toggle(const char *gpio_name)
 {
-	int value;
+	
+	int node, value;
+	unsigned int gpio;
+	node = fdt_path_offset(gd->fdt_blob, gpio_name);
+	if (node < 0) {
+		printf("Could not find %s node in fdt\n", gpio_name);
+		return;
+	}
+	gpio = fdtdec_get_uint(gd->fdt_blob, node, "gpio", 0);
+	if (gpio < 0) {
+		printf("Could not find %s node's gpio in fdt\n", gpio_name);
+		return;
+	}
+	
 	value = gpio_get_value(gpio);
 	value = !value;
 	gpio_set_value(gpio, value);
 }
 
-void led_on(unsigned int gpio)
+void led_on(const char *gpio_name)
 {
-	gpio_set_value(gpio, 0);
-}
-
-void led_off(unsigned int gpio)
-{
+	int node;
+	unsigned int gpio;
+	node = fdt_path_offset(gd->fdt_blob, gpio_name);
+	if (node < 0) {
+		printf("Could not find %s node in fdt\n", gpio_name);
+		return;
+	}
+	gpio = fdtdec_get_uint(gd->fdt_blob, node, "gpio", 0);
+	if (gpio < 0) {
+		printf("Could not find %s node's gpio in fdt\n", gpio_name);
+		return;
+	}
+	
 	gpio_set_value(gpio, 1);
 }
 
-bool button_is_press(unsigned gpio, int value)
+void led_off(const char *gpio_name)
 {
+	int node;
+	unsigned int gpio;
+	node = fdt_path_offset(gd->fdt_blob, gpio_name);
+	if (node < 0) {
+		printf("Could not find %s node in fdt\n", gpio_name);
+		return;
+	}
+	gpio = fdtdec_get_uint(gd->fdt_blob, node, "gpio", 0);
+	if (gpio < 0) {
+		printf("Could not find %s node's gpio in fdt\n", gpio_name);
+		return;
+	}
+	
+	gpio_set_value(gpio, 0);
+}
+
+bool button_is_press(const char *gpio_name, int value)
+{
+	int node;
+	unsigned int gpio;
+	node = fdt_path_offset(gd->fdt_blob, gpio_name);
+	if (node < 0) {
+		printf("Could not find %s node in fdt\n", gpio_name);
+		return false;
+	}
+	gpio = fdtdec_get_uint(gd->fdt_blob, node, "gpio", 0);
+	if (gpio < 0) {
+		printf("Could not find %s node's gpio in fdt\n", gpio_name);
+		return false;
+	}
+	
 	if(gpio_get_value(gpio) == value)
 	{
 		mdelay(10);
@@ -38,14 +93,14 @@ void check_button_is_press(void)
 {
 	int counter = 0;
 
-	while(button_is_press(GPIO_RESET_BTN, GL_RESET_BUTTON_IS_PRESS)){
+	while(button_is_press("reset_key", GL_RESET_BUTTON_IS_PRESS)){
 		
 		if(counter == 0)
 			printf("Reset button is pressed for: %2d ", counter);
 		
-		gpio_set_value(GPIO_RED_LED, 0);
+		led_off("power_led");
 		mdelay(350);
-		gpio_set_value(GPIO_RED_LED, 1);
+		led_on("power_led");
 		mdelay(350);
 
 		counter++;
@@ -54,8 +109,8 @@ void check_button_is_press(void)
 		printf("\b\b\b%2d ", counter);
 
 		if(counter >= 5){
-			gpio_set_value(GPIO_RED_LED, 0);
-			gpio_set_value(GPIO_BLUE_LED, 1);
+			led_off("power_led");
+			led_on("blink_led");
 			run_command("httpd 192.168.1.1", 0);
 			run_command("res", 0);
 			break;

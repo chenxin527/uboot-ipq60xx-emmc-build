@@ -1,8 +1,8 @@
-#define GPIO_RED_LED 37
-#define GPIO_GREEN_LED 50
-#define GPIO_BLUE_LED 35
-#define GPIO_RESET_BTN 9
-#define GPIO_JOYLINK_BTN 8
+//#define GPIO_RED_LED 37
+//#define GPIO_GREEN_LED 50
+//#define GPIO_BLUE_LED 35
+//#define GPIO_RESET_BTN 9
+//#define GPIO_JOYLINK_BTN 8
 
 #define GL_RESET_BUTTON_IS_PRESS        0
 
@@ -54,4 +54,6 @@ int check_test(void);
 int check_config(void);
 int auto_update_by_tftp(void);
 int check_fw_type(void *address);
-void led_toggle(unsigned int gpio);
+void led_toggle(const char *gpio_name);
+void led_on(const char *gpio_name);
+void led_off(const char *gpio_name);

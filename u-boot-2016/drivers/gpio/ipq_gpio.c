@@ -141,9 +141,53 @@ void gl_led_booting(void)
 	//gpio_set_value(GPIO_BLUE_LED, 0x0);
 }
 
+void gl_gpio_init(const char *gpio_name)
+{
+	int node;
+	struct qca_gpio_config gpio_config;
+	
+	node = fdt_path_offset(gd->fdt_blob, gpio_name);
+	if (node < 0) {
+		printf("Could not find %s node\n", gpio_name);
+		return;
+	}
+	
+	gpio_config.gpio	= fdtdec_get_uint(gd->fdt_blob,
+						  node, "gpio", 0);
+	gpio_config.func	= fdtdec_get_uint(gd->fdt_blob,
+						  node, "func", 0);
+	gpio_config.out		= fdtdec_get_uint(gd->fdt_blob,
+						  node, "out", 0);
+	gpio_config.pull	= fdtdec_get_uint(gd->fdt_blob,
+						  node, "pull", 0);
+	gpio_config.drvstr	= fdtdec_get_uint(gd->fdt_blob,
+						  node, "drvstr", 0);
+	gpio_config.oe		= fdtdec_get_uint(gd->fdt_blob,
+						  node, "oe", 0);
+	gpio_config.vm		= fdtdec_get_uint(gd->fdt_blob,
+						  node, "vm", 0);
+	gpio_config.od_en	= fdtdec_get_uint(gd->fdt_blob,
+						  node, "od_en", 0);
+	gpio_config.pu_res	= fdtdec_get_uint(gd->fdt_blob,
+						  node, "pu_res", 0);
+
+	gpio_tlmm_config(&gpio_config);
+}
+
 void gl_led_init(void)
 {
-	unsigned int *gpio_base;
+	gl_gpio_init("power_led");
+	gl_gpio_init("blink_led");
+	gl_gpio_init("system_led");
+	
+	led_on("power_led");
+	led_on("blink_led");
+	led_on("system_led");
+	mdelay(1000);
+	led_off("blink_led");
+	led_off("system_led");
+	
+	/* unsigned int *gpio_base;
 
 	gpio_base = (unsigned int *)GPIO_CONFIG_ADDR(GPIO_RED_LED);
 	writel(0x203, gpio_base);
@@ -163,15 +207,19 @@ void gl_led_init(void)
 	mdelay(1000);
 	gpio_set_value(GPIO_GREEN_LED, 0x0);
 	gpio_set_value(GPIO_BLUE_LED, 0x0);
+	*/
 }
 
 void gl_btn_init(void)
 {
-	unsigned int *gpio_base;
+	gl_gpio_init("reset_key");
+	
+	/*unsigned int *gpio_base;
 
 	gpio_base = (unsigned int *)GPIO_CONFIG_ADDR(GPIO_JOYLINK_BTN);
 	writel(0xc3, gpio_base);
 
 	gpio_base = (unsigned int *)GPIO_CONFIG_ADDR(GPIO_RESET_BTN);
 	writel(0xc3, gpio_base);
+	*/
 }

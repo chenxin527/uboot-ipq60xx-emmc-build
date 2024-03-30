@@ -23,7 +23,12 @@
 		console = "/serial@78B1000";
 		mmc = "/sdhci@7804000";
 		usb0 = "/xhci@8a00000";
+		power_led = "/tlmm-gpio/led_gpio/led_red";
+		blink_led = "/tlmm-gpio/led_gpio/led_blue";
+		system_led = "/tlmm-gpio/led_gpio/led_green";
+		reset_key = "/tlmm-gpio/key_gpio/reset";
 	};
+	
 	ess-switch {
 		switch_mac_mode = <PORT_WRAPPER_PSGMII>;
 		switch_mac_mode1 = <UNUSED>;
@@ -55,19 +60,47 @@
 	};
 	
 	tlmm-gpio {
-
 		led_gpio {
-
-			gpio1 {
-				gpio = <0x25>;
-				func = <0x00>;
-				out = <0x01>;
-				pull = <0x01>;
-				drvstr = <0x03>;
-				oe = <0x01>;
-				vm = <0x01>;
-				od_en = <0x00>;
-				pu_res = <0x02>;
+			led_red {
+				gpio = <37>;
+				func = <0>;
+				out = <GPIO_OUT_HIGH>;
+				drvstr = <GPIO_8MA>;
+				pull = <GPIO_PULL_DOWN>;
+				oe = <GPIO_OE_ENABLE>;
+			};
+			led_blue {
+				gpio = <35>;
+				func = <0>;
+				out = <GPIO_OUT_HIGH>;
+				drvstr = <GPIO_8MA>;
+				pull = <GPIO_PULL_DOWN>;
+				oe = <GPIO_OE_ENABLE>;
+			};
+			led_green {
+				gpio = <50>;
+				func = <0>;
+				out = <GPIO_OUT_HIGH>;
+				drvstr = <GPIO_8MA>;
+				pull = <GPIO_PULL_DOWN>;
+				oe = <GPIO_OE_ENABLE>;
+			};
+		};
+		
+		key_gpio {
+			reset {
+				gpio = <9>;
+				func = <0>;
+				drvstr = <GPIO_8MA>;
+				pull = <GPIO_PULL_UP>;
+				oe = <GPIO_OE_DISABLE>;
+			};
+			joylink {
+				gpio = <8>;
+				func = <0>;
+				drvstr = <GPIO_8MA>;
+				pull = <GPIO_PULL_UP>;
+				oe = <GPIO_OE_DISABLE>;
 			};
 		};
 	};

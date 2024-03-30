@@ -413,7 +413,7 @@ extern char dhcpd_end;
 int net_loop(enum proto_t protocol)
 {
 	int ret = -EINVAL;
-	int wait_time = 0;
+	//int wait_time = 0;
 
 	net_restarted = 0;
 	net_dev_exists = 0;
@@ -619,7 +619,7 @@ restart:
 				net_state = NETLOOP_CONTINUE;
 		else
 			net_state = NETLOOP_SUCCESS;
-#if 1
+#if 0
 			//workaround for some case we can't receive uip_acked
 			//just force upgrade
 			if(webfailsafe_post_done && !file_too_big && !webfailsafe_ready_for_upgrade){

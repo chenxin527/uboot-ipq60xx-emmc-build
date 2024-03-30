@@ -283,7 +283,7 @@ static void show_block_marker(void)
 		else if ((tftp_cur_block % (10 * HASHES_PER_LINE)) == 0)
 			puts("\n\t ");
 		else if ((tftp_cur_block % (10 * 40)) == 0)
-			led_toggle(GPIO_RED_LED);
+			led_toggle("power_led");
 	}
 }
 
@@ -342,7 +342,7 @@ static void tftp_complete(void)
 			time_start * 1000, "/s");
 	}
 	puts("\ndone\n");
-	gpio_set_value(GPIO_RED_LED, LED_ON);
+	led_on("power_led");
 	net_set_state(NETLOOP_SUCCESS);
 }
 
