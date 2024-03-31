@@ -1,0 +1,124 @@
+/*
+ * Copyright (c) 2019, The Linux Foundation. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+/dts-v1/;
+#include "ipq6018-soc.dtsi"
+/ {
+	model ="QCA, IPQ6018-CP03-C3";
+	compatible = "qca,ipq6018", "qca,ipq6018-cp03-c3";
+	machid = <0x8030202>;
+	config_name = "config@cp03-c3";
+
+	aliases {
+		console = "/serial@78B1000";
+		mmc = "/sdhci@7804000";
+		pci0 = "/pci@20000000";
+		usb0 = "/xhci@8a00000";
+		i2c1 = "/i2c@78ba000";
+		power_led = "/tlmm-gpio/led_gpio/led_red";
+		blink_led = "/tlmm-gpio/led_gpio/led_blue";
+		system_led = "/tlmm-gpio/led_gpio/led_green";
+		reset_key = "/tlmm-gpio/key_gpio/reset";
+	};
+	
+	ess-switch {
+		switch_mac_mode = <PORT_WRAPPER_PSGMII>;
+		switch_mac_mode1 = <PORT_WRAPPER_SGMII_PLUS>;
+		malibu_gpio = <75>;
+		malibu_gpio_cnt = <1>;
+		napa_gpio = <77>;
+		napa_gpio_cnt = <1>;
+		mdc_mdio_gpio = <64 65>;
+		port_phyinfo {
+			port@0 {
+				phy_address = <24>;
+				phy_type = <MALIBU_PHY_TYPE>;
+			};
+			port@1 {
+				phy_address = <25>;
+				phy_type = <MALIBU_PHY_TYPE>;
+			};
+			port@2 {
+				phy_address = <26>;
+				phy_type = <MALIBU_PHY_TYPE>;
+			};
+			port@3 {
+				phy_address = <27>;
+				phy_type = <MALIBU_PHY_TYPE>;
+			};
+			port@5 {
+				phy_address = <12>;
+				phy_type = <QCA8081_PHY_TYPE>;
+			};
+		};
+	};
+	
+	tlmm-gpio {
+		stb1 = <69>;
+		stb2 = <70>;
+		clk = <73>;
+		dio = <74>;
+	
+		led_gpio {
+			led_red {
+				gpio = <57>;
+				func = <0>;
+				out = <GPIO_OUT_HIGH>;
+				drvstr = <GPIO_8MA>;
+				pull = <GPIO_PULL_DOWN>;
+				oe = <GPIO_OE_ENABLE>;
+			};
+			led_blue {
+				gpio = <79>;
+				func = <0>;
+				out = <GPIO_OUT_HIGH>;
+				drvstr = <GPIO_8MA>;
+				pull = <GPIO_PULL_DOWN>;
+				oe = <GPIO_OE_ENABLE>;
+			};
+			led_green {
+				gpio = <58>;
+				func = <0>;
+				out = <GPIO_OUT_HIGH>;
+				drvstr = <GPIO_8MA>;
+				pull = <GPIO_PULL_DOWN>;
+				oe = <GPIO_OE_ENABLE>;
+			};
+		};
+		
+		key_gpio {
+			reset {
+				gpio = <56>;
+				func = <0>;
+				drvstr = <GPIO_8MA>;
+				pull = <GPIO_PULL_UP>;
+				oe = <GPIO_OE_DISABLE>;
+			};
+			joylink {
+				gpio = <72>;
+				func = <0>;
+				drvstr = <GPIO_8MA>;
+				pull = <GPIO_PULL_UP>;
+				oe = <GPIO_OE_DISABLE>;
+			};
+			screen {
+				gpio = <71>;
+				func = <0>;
+				drvstr = <GPIO_8MA>;
+				pull = <GPIO_PULL_UP>;
+				oe = <GPIO_OE_DISABLE>;
+			};
+		};
+	};
+};
+

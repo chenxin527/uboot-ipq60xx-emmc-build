@@ -119,6 +119,7 @@ static void httpd_state_reset(void){
 static int httpd_findandstore_firstchunk(void){
 	char *start = NULL;
 	char *end = NULL;
+	int art_size = 0;
 	// flash_info_t *info = &flash_info[0];
 
 	if(!boundary_value){
@@ -229,13 +230,19 @@ static int httpd_findandstore_firstchunk(void){
 
 				// ART
 				}
-				else if((webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_ART)
-						&& (hs->upload_total > WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES)
-						){
+				else if(webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_ART){
+					if(strcmp(getenv("machid"), "8030202") == 0){
+						//For JDCloud AX6600 Athena ART 512 KiB
+						art_size = WEBFAILSAFE_UPLOAD_ART_BIG_SIZE_IN_BYTES;
 
-					printf("## Error: wrong file size, should be less than or equal to: %d bytes!\n", WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES);
-					webfailsafe_upload_failed = 1;
-					file_too_big = 1;
+					} else {
+						art_size = WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES;
+					}
+					if (hs->upload_total > art_size){
+						printf("## Error: wrong file size, should be less than or equal to: %d bytes!\n", art_size);
+						webfailsafe_upload_failed = 1;
+						file_too_big = 1;
+					}
 
 				// firmware can't exceed: (FLASH_SIZE -  WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES)
 				// } else if(hs->upload_total > (info->size - WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES)){
