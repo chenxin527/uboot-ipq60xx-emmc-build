@@ -642,12 +642,12 @@ int smem_get_boot_flash(uint32_t *flash_type,
 				    flash_type, sizeof(uint32_t));
 	if (ret != 0) {
 		printf("smem: read flash type failed\n");
-		*flash_type = SMEM_BOOT_NO_FLASH;
+		//*flash_type = SMEM_BOOT_NO_FLASH;
 		//为了在USB 9008模式救砖时可以启动httpd或直接启动系统，设置一个读取flash type失败的默认值
 		//针对EMMC的机子，可以将*flash_type = SMEM_BOOT_MMC_FLASH
 		//使用的时候取消下面两行的屏蔽
-		//printf("smem: set flash type to deafult type MMC FLASH\n");
-		//*flash_type = SMEM_BOOT_MMC_FLASH;
+		printf("smem: set flash type to deafult type MMC FLASH\n");
+		*flash_type = SMEM_BOOT_MMC_FLASH;
 	}
 
 	ret = smem_read_alloc_entry(SMEM_BOOT_FLASH_INDEX,
