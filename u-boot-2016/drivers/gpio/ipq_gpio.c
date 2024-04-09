@@ -179,14 +179,12 @@ void gl_led_init(void)
 	gl_gpio_init("power_led");
 	gl_gpio_init("blink_led");
 	gl_gpio_init("system_led");
-	
+
 	led_on("power_led");
-	led_on("blink_led");
-	led_on("system_led");
-	mdelay(1000);
-	led_off("blink_led");
-	led_off("system_led");
-	
+	//led_off("blink_led");
+	//led_off("system_led");
+	mdelay(500);
+
 	/* unsigned int *gpio_base;
 
 	gpio_base = (unsigned int *)GPIO_CONFIG_ADDR(GPIO_RED_LED);

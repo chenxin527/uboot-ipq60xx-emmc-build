@@ -73,7 +73,7 @@
 			led_red {
 				gpio = <57>;
 				func = <0>;
-				out = <GPIO_OUT_HIGH>;
+				out = <GPIO_OUT_LOW>;
 				drvstr = <GPIO_8MA>;
 				pull = <GPIO_PULL_DOWN>;
 				oe = <GPIO_OE_ENABLE>;
@@ -81,7 +81,7 @@
 			led_blue {
 				gpio = <79>;
 				func = <0>;
-				out = <GPIO_OUT_HIGH>;
+				out = <GPIO_OUT_LOW>;
 				drvstr = <GPIO_8MA>;
 				pull = <GPIO_PULL_DOWN>;
 				oe = <GPIO_OE_ENABLE>;
@@ -89,7 +89,7 @@
 			led_green {
 				gpio = <58>;
 				func = <0>;
-				out = <GPIO_OUT_HIGH>;
+				out = <GPIO_OUT_LOW>;
 				drvstr = <GPIO_8MA>;
 				pull = <GPIO_PULL_DOWN>;
 				oe = <GPIO_OE_ENABLE>;
