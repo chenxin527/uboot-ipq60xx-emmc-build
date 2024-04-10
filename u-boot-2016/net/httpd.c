@@ -112,6 +112,7 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 		//SMEM_BOOT_NORPLUSEMMC     = 8,
 		if (qca_smem_flash_info.flash_type==5) {
 			//include/gl_api.h
+			//WEBFAILSAFE_UPLOAD_RAM_ADDRESS=0x50000000为了可以上传更大的固件，将上传地址从0x44000000改为0x50000000避免内存crash重启
 			//FW_TYPE_NOR	0 这个是factory.bin固件
 			//FW_TYPE_EMMC	1 这个是GPT文件或者EMMC镜像，只要开头有GPT信息即可
 			//FW_TYPE_QSDK	2 这个是官方原厂固件
@@ -190,8 +191,10 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 			if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_ELF) {
 			//mw 0x%lx 0x00 0x200 擦除内存中上传文件后面的512字节，防止文件不够512字节写入文件后其他字符到eMMC
 			//其实测试不擦除文件后内存，写入一些其他字符也可以正常启动
-			sprintf(buf,"mw 0x%lx 0x00 0x200 && mmc dev 0 && flash 0:APPSBL && flash 0:APPSBL_1",
-				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+size));
+			sprintf(buf,"mw 0x%lx 0x00 0x200 && mmc dev 0 && flash 0:APPSBL 0x%lx $filesize && flash 0:APPSBL_1 0x%lx $filesize",
+				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+size),
+				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS),
+				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS));
 			} else {
 				printf("\n\n* The upload file is NOT supported UBOOT ELF!! *\n\n");
 				return(-1);
@@ -219,8 +222,9 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 		// for those who want to use OFW on router with replaced/bigger FLASH
 		printf("\n\n****************************\n*      ART  UPGRADING      *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
 		if (qca_smem_flash_info.flash_type==5) {
-			sprintf(buf,"mw 0x%lx 0x00 0x200 && mmc dev 0 && flash 0:ART",
-				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+size));
+			sprintf(buf,"mw 0x%lx 0x00 0x200 && mmc dev 0 && flash 0:ART 0x%lx $filesize",
+				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+size),
+				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS));
 		} else if (qca_smem_flash_info.flash_type==2) {
 			sprintf(buf,
 				"nand erase 0x%lx 0x%lx; nand write 0x%lx 0x%lx 0x%lx",
@@ -260,8 +264,10 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 		printf("\n\n****************************\n*      CDT  UPGRADING      *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
 		if (qca_smem_flash_info.flash_type==5) {
 			if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_CDT) {
-			sprintf(buf,"mw 0x%lx 0x00 0x200 && mmc dev 0 && flash 0:CDT && flash 0:CDT_1",
-				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+size));
+			sprintf(buf,"mw 0x%lx 0x00 0x200 && mmc dev 0 && flash 0:CDT 0x%lx $filesize && flash 0:CDT_1 0x%lx $filesize",
+				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+size),
+				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS),
+				(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS));
 			} else {
 				printf("\n\n* The upload file is NOT supported CDT!! *\n\n");
 				return(-1);

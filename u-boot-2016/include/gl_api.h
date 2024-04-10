@@ -11,7 +11,7 @@
 
 void check_button_is_press(void);
 
-#define WEBFAILSAFE_PROGRESS_START			0
+#define WEBFAILSAFE_PROGRESS_START		0
 #define WEBFAILSAFE_PROGRESS_TIMEOUT		1
 #define WEBFAILSAFE_PROGRESS_UPLOAD_READY	2
 #define WEBFAILSAFE_PROGRESS_UPGRADE_READY	3
@@ -24,7 +24,7 @@ void check_button_is_press(void);
 #define WEBFAILSAFE_UPGRADE_TYPE_CDT		4
 
 #define CONFIG_LOADADDR                                 0x44000000
-#define WEBFAILSAFE_UPLOAD_RAM_ADDRESS                  0x44000000
+#define WEBFAILSAFE_UPLOAD_RAM_ADDRESS                  0x50000000
 
 #define WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS                0x520000
 #define WEBFAILSAFE_UPLOAD_ART_ADDRESS                  0x660000
