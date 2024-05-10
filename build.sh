@@ -1,10 +1,18 @@
 #!/bin/sh
 
+echo "Delete old u-boot files"
+if [ -f "u-boot.bin" ]; then
+    rm u-boot.bin
+fi
+if [ -f "u-boot-2016/u-boot" ]; then
+    rm u-boot-2016/u-boot
+fi
+
 echo "Set Compilation Environment"
 cd u-boot-2016/
 . ../env.sh
 
-echo "Build"
+echo "Build ipq6018"
 make ipq6018_defconfig
 # make menuconfig
 make V=s
