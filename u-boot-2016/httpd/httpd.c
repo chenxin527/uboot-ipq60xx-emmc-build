@@ -102,6 +102,7 @@ static void httpd_state_reset(void){
 
 	data_start_found = 0;
 	post_packet_counter = 0;
+	led_on("blink_led");
 
 	if(boundary_value){
 #ifdef DEBUG_UIP
