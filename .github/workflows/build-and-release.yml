@@ -1,0 +1,44 @@
+name: build-and-release
+
+on:
+  workflow_dispatch:
+
+permissions: write-all
+
+jobs:
+  core:
+    name: build-and-release
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Projects
+        uses: actions/checkout@main
+
+      - name: Initialization Environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt update
+          sudo apt install build-essential device-tree-compiler python2.7
+          sudo -E systemctl daemon-reload
+          sudo -E timedatectl set-timezone "Asia/Shanghai"
+
+      - name: Initialization Values
+        run: |
+          echo "COMPILE_DATE=$(TZ=UTC-8 date +"%y.%m.%d-%H.%M.%S")" >> $GITHUB_ENV
+
+      - name: Clone Code
+        run: |
+          git clone https://github.com/chenxin527/uboot-ipq60xx-emmc-build.git
+
+      - name: Compile U-Boot
+        run: |
+          cd ./uboot-ipq60xx-emmc-build/
+
+          ./build.sh
+
+      - name: Release U-Boot
+        uses: softprops/action-gh-release@master
+        with:
+          tag_name: ${{env.COMPILE_DATE}}
+          files: ./uboot-ipq60xx-emmc-build/openwrt-ipq6018-u-boot.mbn
+          body_path: ./uboot-ipq60xx-emmc-build/release_notes_latest.md
