@@ -1,20 +1,36 @@
-You will also like to see https://github.com/lgs2007m/cdt-gpt-ipq60xx-generate
+本仓库修改自：https://github.com/lgs2007m/uboot-ipq60xx-build
 
-## uboot build 
-u-boot-2016 source code base on https://github.com/gl-inet/uboot-ipq60xx
+u-boot-2016 源代码基于：https://github.com/gl-inet/uboot-ipq60xx
 
-PS: The mbn scripts run with python2.7, you should install and switch to python2.7.
+## 适配设备
+
+此 U-Boot 适配以下 IPQ60xx eMMC 机型：
+
+- 京东云亚瑟（RE-SS-01）
+
+- 京东云雅典娜（RE-CS-02）
+
+- 红米 AX5 JDCloud（RA50）
+
+## 编译步骤
+
 ```
-git clone https://github.com/lgs2007m/uboot-ipq60xx-build
-cd uboot-ipq60xx-build/
+sudo apt install build-essential device-tree-compiler python2.7
+git clone https://github.com/chenxin527/uboot-ipq60xx-emmc-build.git
+cd uboot-ipq60xx-emmc-build
 ./build.sh
 ```
 
-The uboot binary will be: uboot-ipq60xx-build/u-boot.bin
+PS：mbn 脚本使用 Python2.7 运行，你应该安装并切换到 Python2.7。
 
-The uboot failsafe HTTP server ip: 192.168.1.1  
-Update firmware: http://192.168.1.1  
-Update ART: http://192.168.1.1/art.html  
-Update CDT: http://192.168.1.1/cdt.html  
-Update IMG: http://192.168.1.1/img.html  
-Update U-BOOT: http://192.168.1.1/uboot.html  
+编译生成的 U-Boot 文件：uboot-ipq60xx-emmc-build/openwrt-ipq6018-u-boot.mbn
+
+## 网址说明
+
+| 功能        | 网址                          | 备注 |
+| :---------- | :---------------------------- | :--- |
+| 更新固件    | http://192.168.1.1            |      |
+| 更新 ART    | http://192.168.1.1/art.html   |      |
+| 更新 CDT    | http://192.168.1.1/cdt.html   |      |
+| 更新 IMG    | http://192.168.1.1/img.html   |      |
+| 更新 U-Boot | http://192.168.1.1/uboot.html |      |
