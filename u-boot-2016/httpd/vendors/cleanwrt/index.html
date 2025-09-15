@@ -1,25 +1,75 @@
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<title>固件更新</title>
-		<link rel="stylesheet" href="style.css">
-	</head>
-	<body>
-		<div id="m">
-			<h1>固件更新</h1>
-			<p>此页面用于路由器的<strong>固件</strong>更新<br>请选择要更新的路由器固件文件并点击 <strong>更新固件</strong> 按钮。</p>
-			<form method="post" enctype="multipart/form-data"><input type="file" name="firmware"><input type="submit" value="更新固件"></form>
-			<div class="i w">
-				<strong>提醒：</strong>
-				<ul>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>固件更新</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>U-Boot 管理器</h2>
+        </div>
+
+        <div class="nav-links">
+            <ul>
+                <li>
+                    <a href="index.html" class="active">
+                        <span>固件更新</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="art.html">
+                        <span>ART 更新</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="cdt.html">
+                        <span>CDT 更新</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="img.html">
+                        <span>IMG 更新</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="uboot.html">
+                        <span>U-Boot 更新</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <p>version: 2025.09.15</p>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <h1>固件更新</h1>
+            <p>此页面用于路由器的<strong>固件</strong>更新<br>请选择要更新的路由器固件文件并点击 <strong>更新固件</strong> 按钮。</p>
+
+            <form method="post" enctype="multipart/form-data">
+                <input type="file" name="firmware" required>
+                <input type="submit" value="更新固件">
+            </form>
+
+            <div class="warning-box">
+                <strong>提醒：</strong>
+                <ul>
                     <li>固件上传需要时间，点击“更新固件”按钮后请耐心等待文件上传，不要刷新或关闭此页面！</li>
                     <li>在更新期间不要断开路由器的电源，如果更新顺利，设备将自动重启！</li>
                     <li>你可以上传任何你想要上传的文件，所以请为你的设备选择合适的固件文件！</li>
                 </ul>
-			</div>
-		</div>
-		<div id="f">您可以在 <a href="https://github.com/chenxin527/uboot-ipq60xx-emmc-build" target="_blank">GitHub</a> 上找到有关此项目的详细信息</div>
-        <div id="f">version: 20.05.22</div>
-	</body>
+            </div>
+
+            <div class="page-footer">
+                <p>您可以在 <a href="https://github.com/chenxin527/uboot-ipq60xx-emmc-build" target="_blank">GitHub</a> 上找到有关此项目的详细信息</p>
+            </div>
+        </div>
+    </div>
+</body>
 </html>

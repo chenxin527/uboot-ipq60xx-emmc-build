@@ -1,18 +1,133 @@
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<title>更新进行中</title>
-		<style>h1,p,ul{margin:0;padding:0}html,body{font:13px/20px Arial,sans-serif;background:#EDEDED}#m{max-width:750px;margin:30px auto 10px;border:solid 1px #BABABA;background:#FFF;border-radius:7px;box-shadow:0 0 10px #D2D1D1}#m > *{padding:20px}h1{font:bold 50px/50px Tahoma;border-bottom:solid 1px #E8E8E8}a,h1{color:#2450AD;text-decoration:none}.i{margin:20px;border-radius:7px;text-align:justify}.w{background:#FEFDCE;border:solid 1px #FFC643}#f{text-align:center;color:#969393}form,p,h1{text-align:center}ul{list-style:square;margin:0 0 0 20px}.i strong{margin:0 0 5px;display:block}#l{height:30px;width:30px;margin:0 auto 20px;-webkit-animation:r 1s infinite linear;-moz-animation:r 1s infinite linear;-o-animation:r 1s infinite linear;animation:r 1s infinite linear;border-left:7px solid #EAF1FF;border-right:7px solid #EAF1FF;border-bottom:7px solid #EAF1FF;border-top:7px solid #2450AD;border-radius:100%}@-webkit-keyframes r{from{-webkit-transform:rotate(0deg)}to{-webkit-transform:rotate(359deg)}}@-moz-keyframes r{from{-moz-transform:rotate(0deg)}to{-moz-transform:rotate(359deg)}}@-o-keyframes r{from{-o-transform:rotate(0deg)}to{-o-transform:rotate(359deg)}}@keyframes r{from{transform:rotate(0deg)}to{transform:rotate(359deg)}}
-		</style>
-	</head>
-	<body>
-		<div id="m">
-			<h1>更新进行中</h1>
-			<p>您的文件已成功上传！正在进行更新，请等待设备自动重启！<br>更新时间取决于固件大小，最多可能需要几分钟。<strong>您现在可以安全关闭此页面</strong>。</p>
-			<div id="l"></div>
-		</div>
-		<div id="f">您可以在 <a href="https://github.com/chenxin527/uboot-ipq60xx-emmc-build" target="_blank">GitHub</a> 上找到有关此项目的详细信息</div>
-        <div id="f">version: 20.05.22</div>
-	</body>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>更新进行中</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html, body {
+            background: linear-gradient(180deg, #2c3e50 0%, #1a2530 100%);
+            color: #ecf0f1;
+            min-height: 100vh;
+            margin: 0;
+            font-size: 13px;
+            line-height: 20px;
+            font-family:  'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+        }
+
+        h1, p, form, ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            /* font-size: 2.5rem; */
+            color: #0999c5;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            font-weight: 700;
+            font: bold 50px/50px Tahoma;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .loading-spinner {
+            height: 60px;
+            width: 60px;
+            margin: 30px auto;
+            animation: rotate 1s infinite linear;
+            border-left: 8px solid rgba(234, 241, 255, 0.3);
+            border-right: 8px solid rgba(234, 241, 255, 0.3);
+            border-bottom: 8px solid rgba(234, 241, 255, 0.3);
+            border-top: 8px solid #4CAF50;
+            border-radius: 100%;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(359deg); }
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, rgba(220, 255, 220, 0.1) 0%, rgba(200, 240, 200, 0.1) 100%);
+            border-left: 4px solid #4CAF50;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            color: #d4edda;
+            text-align: center;
+        }
+
+        .page-footer {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: -30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #bdc3c7;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="container">
+            <h1>更新进行中</h1>
+
+            <div class="loading-spinner"></div>
+
+            <div class="success-message">
+                <strong>更新状态：进行中</strong>
+                <p><br>您的文件已成功上传！正在进行更新，请等待设备自动重启！<br>更新时间取决于固件大小，最多可能需要几分钟。<strong>您现在可以安全关闭此页面</strong>。</p>
+            </div>
+
+            <div class="page-footer">
+                <p>您可以在 <a href="https://github.com/chenxin527/uboot-ipq60xx-emmc-build" target="_blank">GitHub</a> 上找到有关此项目的详细信息</p>
+            </div>
+        </div>
+    </div>
+</body>
 </html>

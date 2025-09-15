@@ -1,17 +1,92 @@
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="Cache-Control" content="no-cache" />
-		<meta http-equiv="refresh" content="2; URL=/" />
-		<title>找不到网页</title>
-		<link rel="stylesheet" href="style.css">
-	</head>
-	<body>
-		<div id="m">
-			<h1 class="red">404 - 找不到网页</h1>
-			<div class="i e">您要查找的页面不存在！可能是输入了错误的URL，或者页面已被移动或删除。</div>
-		</div>
-		<div id="f">您可以在 <a href="https://github.com/chenxin527/uboot-ipq60xx-emmc-build" target="_blank">GitHub</a> 上找到有关此项目的详细信息</div>
-	</body>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="refresh" content="5; URL=index.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找不到网页</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 倒计时指示器 */
+        .countdown {
+            font-size: 1.2rem;
+            color: #4CAF50;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>U-Boot 管理器</h2>
+        </div>
+
+        <div class="nav-links">
+            <ul>
+                <li>
+                    <a href="index.html">
+                        <span>固件更新</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="art.html">
+                        <span>ART 更新</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="cdt.html">
+                        <span>CDT 更新</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="img.html">
+                        <span>IMG 更新</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="uboot.html">
+                        <span>U-Boot 更新</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <p>version: 2025.09.15</p>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="error-container">
+            <div class="error-icon">🔍</div>
+            <h1 class="error-title">404 - 找不到网页</h1>
+
+            <div class="error-message">
+                <strong>页面未找到：</strong>
+                您要查找的页面不存在！可能是输入了错误的URL，或者页面已被移动或删除。
+            </div>
+
+            <div class="countdown" id="countdown">
+                页面将在 <span id="timer">5</span> 秒后自动跳转到首页，<a href="index.html">点击此处</a> 立即返回
+            </div>
+
+            <div class="page-footer">
+                <p>您可以在 <a href="https://github.com/chenxin527/uboot-ipq60xx-emmc-build" target="_blank">GitHub</a> 上找到有关此项目的详细信息</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* 倒计时功能 */
+        let seconds = 5;
+        const countdownElement = document.getElementById('timer');
+
+        const countdownInterval = setInterval(function() {
+            seconds--;
+            countdownElement.textContent = seconds;
+        }, 1000);
+    </script>
+</body>
 </html>
