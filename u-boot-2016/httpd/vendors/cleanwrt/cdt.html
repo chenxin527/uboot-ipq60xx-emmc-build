@@ -2,26 +2,25 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>CDT update</title>
+		<title>CDT 更新</title>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
 		<div id="m">
-			<h1>CDT UPDATE</h1>
-			<p>You are going to update <strong>CDT (Configuration Data Table)</strong> on the device.<br>Please, choose file from your local hard drive and click <strong>Update CDT</strong> button.</p>
-			<form method="post" enctype="multipart/form-data"><input type="file" name="cdt"><input type="submit" value="Update CDT"></form>
+			<h1>CDT 更新</h1>
+			<p>此页面用于路由器的<strong> CDT (Configuration Data Table) </strong>更新。<br>请选择要更新的路由器 CDT 文件并点击 <strong>更新 CDT</strong> 按钮。</p>
+			<form method="post" enctype="multipart/form-data"><input type="file" name="cdt"><input type="submit" value="更新 CDT"></form>
 			<div class="i w">
-				<strong>WARNINGS</strong>
+				<strong>提醒：</strong>
 				<ul>
-					<li><strong>updating CDT is a very dangerous operation and may damage your device!</strong></li>
-					<li><strong>The CDT image should be larger than 10KB</strong></li>
-					<li>do not power off the device during update</li>
-					<li>if everything goes well, the device will restart</li>
-					<li>you can upload whatever you want, so be sure that you choose proper CDT image for your device</li>
-				</ul>
+                    <li><strong>更新 CDT 是一个十分危险的操作，可能导致您的路由器无法启动！</strong></li>
+                    <li><strong>上传的 CDT 文件应大于 10KB，不足 10KB 的请在文件末尾填充空数据（0x0），但不要超过 CDT 分区大小！</strong></li>
+                    <li>在更新期间不要断开路由器的电源，如果更新顺利，设备将自动重启！</li>
+                    <li>你可以上传任何你想要上传的文件，所以一定要为你的设备选择合适的 CDT 文件！</li>
+                </ul>
 			</div>
 		</div>
-		<div id="f">You can find more information about this project on <a href="https://github.com/pepe2k/u-boot_mod" target="_blank">GitHub</a></div>
-        <div id="f">uboot2.0 version:20.05.22</div>
+		<div id="f">您可以在 <a href="https://github.com/chenxin527/uboot-ipq60xx-emmc-build" target="_blank">GitHub</a> 上找到有关此项目的详细信息</div>
+        <div id="f">version: 20.05.22</div>
 	</body>
 </html>

@@ -2,25 +2,24 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>IMG update</title>
+		<title>IMG 更新</title>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
 		<div id="m">
-			<h1>IMG UPDATE</h1>
-			<p>You are going to update <strong>GPT (GUID Partition Table) or EMMC image starting with GPT</strong> on the device.<br>Please, choose file from your local hard drive and click <strong>Update IMG</strong> button.</p>
-			<form method="post" enctype="multipart/form-data"><input type="file" name="img"><input type="submit" value="Update IMG"></form>
+			<h1>IMG 更新</h1>
+			<p>此页面用于路由器的<strong> GPT (GUID Partition Table) 分区表或 eMMC 镜像（从 GPT 分区表开始）</strong>更新。<br>请选择要更新的文件并点击 <strong>更新 IMG</strong> 按钮。</p>
+			<form method="post" enctype="multipart/form-data"><input type="file" name="img"><input type="submit" value="更新 IMG"></form>
 			<div class="i w">
-				<strong>WARNINGS</strong>
+				<strong>提醒：</strong>
 				<ul>
-					<li><strong>updating IMG is a very dangerous operation and may damage your device!</strong></li>
-					<li>do not power off the device during update</li>
-					<li>if everything goes well, the device will restart</li>
-					<li>you can upload whatever you want, so be sure that you choose proper IMG image for your device</li>
-				</ul>
+                    <li><strong>更新 IMG 是一个十分危险的操作，可能导致您的路由器无法启动！</strong></li>
+                    <li>在更新期间不要断开路由器的电源，如果更新顺利，设备将自动重启！</li>
+                    <li>你可以上传任何你想要上传的文件，所以一定要为你的设备选择合适的 IMG 文件！</li>
+                </ul>
 			</div>
 		</div>
-		<div id="f">You can find more information about this project on <a href="https://github.com/pepe2k/u-boot_mod" target="_blank">GitHub</a></div>
-        <div id="f">uboot2.0 version:20.05.22</div>
+		<div id="f">您可以在 <a href="https://github.com/chenxin527/uboot-ipq60xx-emmc-build" target="_blank">GitHub</a> 上找到有关此项目的详细信息</div>
+        <div id="f">version: 20.05.22</div>
 	</body>
 </html>
