@@ -223,11 +223,14 @@ static int httpd_findandstore_firstchunk(void){
 				// has correct size (for every type of upgrade)
 
 				// U-Boot
-				if((webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UBOOT) && (hs->upload_total > WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES)){
-
-					printf("## Error: wrong file size, should be less than or equal to: %d bytes!\n", WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES);
-					webfailsafe_upload_failed = 1;
-					file_too_big = 1;
+				if(webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UBOOT){
+					if((hs->upload_total > WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES) && (hs->upload_total <= WEBFAILSAFE_UPLOAD_UBOOT_BIG_SIZE_IN_BYTES)){
+						printf("## Warning: this uboot requires 0:APPSBL partition size no less than 1024KB!\n");
+					} else if (hs->upload_total > WEBFAILSAFE_UPLOAD_UBOOT_BIG_SIZE_IN_BYTES){
+						printf("## Error: wrong file size, should be less than or equal to: %d bytes!\n", WEBFAILSAFE_UPLOAD_UBOOT_BIG_SIZE_IN_BYTES);
+						webfailsafe_upload_failed = 1;
+						file_too_big = 1;
+					}
 
 				// ART
 				}
@@ -250,7 +253,7 @@ static int httpd_findandstore_firstchunk(void){
 
 				// 	printf("## Error: file too big!\n");
 				// 	webfailsafe_upload_failed = 1;
-				
+
 				// CDT
 				}
 				else if((webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_CDT)
