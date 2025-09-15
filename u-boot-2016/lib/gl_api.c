@@ -7,7 +7,7 @@ DECLARE_GLOBAL_DATA_PTR;
 
 void led_toggle(const char *gpio_name)
 {
-	
+
 	int node, value;
 	unsigned int gpio;
 	node = fdt_path_offset(gd->fdt_blob, gpio_name);
@@ -20,7 +20,7 @@ void led_toggle(const char *gpio_name)
 		printf("Could not find %s node's gpio in fdt\n", gpio_name);
 		return;
 	}
-	
+
 	value = gpio_get_value(gpio);
 	value = !value;
 	gpio_set_value(gpio, value);
@@ -40,7 +40,7 @@ void led_on(const char *gpio_name)
 		printf("Could not find %s node's gpio in fdt\n", gpio_name);
 		return;
 	}
-	
+
 	gpio_set_value(gpio, 1);
 }
 
@@ -58,7 +58,7 @@ void led_off(const char *gpio_name)
 		printf("Could not find %s node's gpio in fdt\n", gpio_name);
 		return;
 	}
-	
+
 	gpio_set_value(gpio, 0);
 }
 
@@ -76,7 +76,7 @@ bool button_is_press(const char *gpio_name, int value)
 		printf("Could not find %s node's gpio in fdt\n", gpio_name);
 		return false;
 	}
-	
+
 	if(gpio_get_value(gpio) == value)
 	{
 		mdelay(10);
@@ -94,10 +94,10 @@ void check_button_is_press(void)
 	int counter = 0;
 
 	while(button_is_press("reset_key", GL_RESET_BUTTON_IS_PRESS)){
-		
+
 		if(counter == 0)
 			printf("Reset button is pressed for: %2d ", counter);
-		
+
 		led_off("power_led");
 		mdelay(350);
 		led_on("power_led");
@@ -119,7 +119,7 @@ void check_button_is_press(void)
 
 	if (counter != 0)
 		printf("\n");
-	
+
 	return;
 }
 
@@ -174,7 +174,7 @@ int check_test()
 	s8s = (volatile unsigned char *)0x44000018;
 	s9t = (volatile unsigned char *)0x44000019;
 
-	
+
 	if (*f1f==0x66 && *f2i==0x69 && *f3r==0x72 && *f4s==0x73 && \
 			*f5t==0x74 && *f6t==0x74 && *f7e==0x65 && *f8s==0x73 && \
 			*f9t==0x74 && \
@@ -200,7 +200,7 @@ int check_config()
 	volatile unsigned char *tmp = NULL;
 
 	char cmd[128] = {0};
-	sprintf(cmd, "sf read 0x44000000 0x%x 16", 
+	sprintf(cmd, "sf read 0x44000000 0x%x 16",
 		CONFIG_ART_START);
 	run_command(cmd, 0);
 
@@ -236,13 +236,17 @@ int check_fw_type(void *address){
 	u32 *sign_ubi=(u32 *)address;
 	u32 *sign_cdt=(u32 *)address;
 	u32 *sign_elf=(u32 *)address;
+	u32 *sign_kernel6m=(u32 *)(address+0x600000);
+	u32 *sign_kernel12m=(u32 *)(address+0xc00000);
 
 	if (*sign_flas==0x73616c46)
 		return FW_TYPE_QSDK;
 	else if (*sign_ubi==0x23494255)
 		return FW_TYPE_UBI;
-	else if (*sign_doodfeed==0xedfe0dd0)
-		return FW_TYPE_NOR;
+	else if (*sign_doodfeed==0xedfe0dd0 && *sign_kernel6m==0x73717368)
+		return FW_TYPE_FACTORY_KERNEL6M;
+	else if (*sign_doodfeed==0xedfe0dd0 && *sign_kernel12m==0x73717368)
+		return FW_TYPE_FACTORY_KERNEL12M;
 	else if (*sign_55aa==0xaa55)
 		return FW_TYPE_EMMC;
 	else if (*sign_cdt==0x00544443)
