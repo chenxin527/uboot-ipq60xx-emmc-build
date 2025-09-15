@@ -122,7 +122,7 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 			//FW_TYPE_FACTORY_KERNEL12M	7 这个是12MB kernel的factory.bin固件
 			//check_fw_type 只检查文件的开头几个特殊magic num
 			if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_FACTORY_KERNEL6M) {
-				printf("\n\n******************************\n* 6MB Kernel Factory FIRMWARE UPGRADING *\n*  DO NOT POWER OFF DEVICE!  *\n******************************\n\n");
+				printf("\n\n******************************\n* FACTORY FIRMWARE UPGRADING *\n* FIRMWARE KERNEL SIZE: 6MB  *\n*  DO NOT POWER OFF DEVICE!  *\n******************************\n\n");
 				sprintf(buf,"mw 0x%lx 0x00 0x200 && mmc dev 0 && flash 0:HLOS 0x%lx 0x%lx && flash rootfs 0x%lx 0x%lx && mmc read 0x%lx 0x622 0x200 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && flash 0:BOOTCONFIG 0x%lx 0x40000 && flash 0:BOOTCONFIG1 0x%lx 0x40000",
 					//mw 0x%lx 0x00 0x200 擦除内存中上传文件后面的512字节，防止文件不够512字节写入文件后其他字符到EMMC
 					//其实测试不擦除文件后内存，写入一些其他字符也可以正常启动
@@ -140,7 +140,7 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
 					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS);
 			} else if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_FACTORY_KERNEL12M) {
-				printf("\n\n******************************\n* 12MB Kernel Factory FIRMWARE UPGRADING *\n*  DO NOT POWER OFF DEVICE!  *\n******************************\n\n");
+				printf("\n\n******************************\n* FACTORY FIRMWARE UPGRADING *\n* FIRMWARE KERNEL SIZE: 12MB *\n*  DO NOT POWER OFF DEVICE!  *\n******************************\n\n");
 				sprintf(buf,"mw 0x%lx 0x00 0x200 && mmc dev 0 && flash 0:HLOS 0x%lx 0x%lx && flash rootfs 0x%lx 0x%lx && mmc read 0x%lx 0x622 0x200 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && flash 0:BOOTCONFIG 0x%lx 0x40000 && flash 0:BOOTCONFIG1 0x%lx 0x40000",
 					//mw 0x%lx 0x00 0x200 擦除内存中上传文件后面的512字节，防止文件不够512字节写入文件后其他字符到EMMC
 					//其实测试不擦除文件后内存，写入一些其他字符也可以正常启动
