@@ -51,6 +51,8 @@ void check_button_is_press(void);
 #define FW_TYPE_UBI 3
 #define FW_TYPE_CDT 4
 #define FW_TYPE_ELF 5
+#define FW_TYPE_FACTORY_KERNEL6M 6
+#define FW_TYPE_FACTORY_KERNEL12M 7
 
 int check_test(void);
 int check_config(void);

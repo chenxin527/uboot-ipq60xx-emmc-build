@@ -112,14 +112,17 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 		//SMEM_BOOT_NORPLUSEMMC     = 8,
 		if (qca_smem_flash_info.flash_type==5) {
 			//include/gl_api.h
-			//WEBFAILSAFE_UPLOAD_RAM_ADDRESS=0x50000000为了可以上传更大的固件，将上传地址从0x44000000改为0x50000000避免内存crash重启
-			//FW_TYPE_NOR	0 这个是factory.bin固件
+			//WEBFAILSAFE_UPLOAD_RAM_ADDRESS=0x50000000 为了可以上传更大的固件，将上传地址从0x44000000改为0x50000000避免内存crash重启
 			//FW_TYPE_EMMC	1 这个是GPT文件或者EMMC镜像，只要开头有GPT信息即可
 			//FW_TYPE_QSDK	2 这个是官方原厂固件
 			//FW_TYPE_UBI	3 这个是UBI固件，EMMC没有UBI固件
+			//FW_TYPE_CDT   4 这个是CDT文件
+			//FW_TYPE_ELF   5 这个是U-Boot文件
+			//FW_TYPE_FACTORY_KERNEL6M	6 这个是6MB kernel的factory.bin固件
+			//FW_TYPE_FACTORY_KERNEL12M	7 这个是12MB kernel的factory.bin固件
 			//check_fw_type 只检查文件的开头几个特殊magic num
-			if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_NOR) {
-				printf("\n\n******************************\n* Factory FIRMWARE UPGRADING *\n*  DO NOT POWER OFF DEVICE!  *\n******************************\n\n");
+			if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_FACTORY_KERNEL6M) {
+				printf("\n\n******************************\n* 6MB Kernel Factory FIRMWARE UPGRADING *\n*  DO NOT POWER OFF DEVICE!  *\n******************************\n\n");
 				sprintf(buf,"mw 0x%lx 0x00 0x200 && mmc dev 0 && flash 0:HLOS 0x%lx 0x%lx && flash rootfs 0x%lx 0x%lx && mmc read 0x%lx 0x622 0x200 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && flash 0:BOOTCONFIG 0x%lx 0x40000 && flash 0:BOOTCONFIG1 0x%lx 0x40000",
 					//mw 0x%lx 0x00 0x200 擦除内存中上传文件后面的512字节，防止文件不够512字节写入文件后其他字符到EMMC
 					//其实测试不擦除文件后内存，写入一些其他字符也可以正常启动
@@ -129,6 +132,24 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 					(unsigned long int)0x600000,
 					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x600000),
 					(unsigned long int)(size-0x600000),
+					//这部分改两个BOOTCONFIG，启动系统0，即rootfs
+					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x80),
+					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x94),
+					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0xA8),
+					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS);
+			} else if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_FACTORY_KERNEL12M) {
+				printf("\n\n******************************\n* 12MB Kernel Factory FIRMWARE UPGRADING *\n*  DO NOT POWER OFF DEVICE!  *\n******************************\n\n");
+				sprintf(buf,"mw 0x%lx 0x00 0x200 && mmc dev 0 && flash 0:HLOS 0x%lx 0x%lx && flash rootfs 0x%lx 0x%lx && mmc read 0x%lx 0x622 0x200 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && mw.b 0x%lx 0x00 0x1 && flash 0:BOOTCONFIG 0x%lx 0x40000 && flash 0:BOOTCONFIG1 0x%lx 0x40000",
+					//mw 0x%lx 0x00 0x200 擦除内存中上传文件后面的512字节，防止文件不够512字节写入文件后其他字符到EMMC
+					//其实测试不擦除文件后内存，写入一些其他字符也可以正常启动
+					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+size),
+					//factory.bin由kernel+rootfs组成，其中kernel固定12MB大小
+					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+					(unsigned long int)0xC00000,
+					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0xC00000),
+					(unsigned long int)(size-0xC00000),
 					//这部分改两个BOOTCONFIG，启动系统0，即rootfs
 					(unsigned long int)WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
 					(unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS+0x80),
@@ -325,7 +346,7 @@ int do_http_progress(const int state){
 		case WEBFAILSAFE_PROGRESS_UPGRADE_FAILED:
 			led_on("power_led");
 			led_off("blink_led");
-			led_off("system_led");			
+			led_off("system_led");
 			printf("## Error: HTTP ugrade failed!\n\n");
 			// // blink LED fast for 4 sec
 			// for(i = 0; i < 80; ++i){
