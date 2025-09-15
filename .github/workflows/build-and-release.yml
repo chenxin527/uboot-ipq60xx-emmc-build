@@ -25,20 +25,35 @@ jobs:
       - name: Initialization Values
         run: |
           echo "COMPILE_DATE=$(TZ=UTC-8 date +"%y.%m.%d-%H.%M.%S")" >> $GITHUB_ENV
+          echo "UBOOT_VERSION=$(TZ=UTC-8 date +"%y%m%d.%H%M%S")" >> $GITHUB_ENV
 
       - name: Clone Code
         run: |
-          git clone https://github.com/chenxin527/uboot-ipq60xx-emmc-build.git
+          git clone --depth=1 --single-branch --branch main https://github.com/chenxin527/uboot-ipq60xx-emmc-build.git
 
-      - name: Compile U-Boot
+      - name: Compile U-Boot Full
         run: |
           cd ./uboot-ipq60xx-emmc-build/
 
           ./build.sh
 
+          mv openwrt-ipq6018-u-boot.mbn uboot-ipq60xx-emmc-full-"$UBOOT_VERSION".bin
+
+      - name: Compile U-Boot Tiny
+        run: |
+          cd ./uboot-ipq60xx-emmc-build/
+
+          mv ./u-boot-2016/httpd/vendors/cleanwrt/ ./u-boot-2016/httpd/vendors/cleanwrt_full/
+
+          mv ./u-boot-2016/httpd/vendors/cleanwrt_tiny/ ./u-boot-2016/httpd/vendors/cleanwrt/
+
+          ./build.sh
+
+          mv openwrt-ipq6018-u-boot.mbn uboot-ipq60xx-emmc-tiny-"$UBOOT_VERSION".bin
+
       - name: Release U-Boot
         uses: softprops/action-gh-release@master
         with:
           tag_name: ${{env.COMPILE_DATE}}
-          files: ./uboot-ipq60xx-emmc-build/openwrt-ipq6018-u-boot.mbn
-          body_path: ./uboot-ipq60xx-emmc-build/release_notes_latest.md
+          files: ./uboot-ipq60xx-emmc-build/uboot-ipq60xx-emmc-*.bin
+          body_path: ./uboot-ipq60xx-emmc-build/release_notes.md
