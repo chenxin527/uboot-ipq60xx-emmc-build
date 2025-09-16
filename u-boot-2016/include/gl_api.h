@@ -22,6 +22,7 @@ void check_button_is_press(void);
 #define WEBFAILSAFE_UPGRADE_TYPE_ART		2
 #define WEBFAILSAFE_UPGRADE_TYPE_IMG		3
 #define WEBFAILSAFE_UPGRADE_TYPE_CDT		4
+#define WEBFAILSAFE_UPGRADE_TYPE_UIMAGE     5
 
 #define CONFIG_LOADADDR                                 0x44000000
 #define WEBFAILSAFE_UPLOAD_RAM_ADDRESS                  0x50000000
@@ -53,6 +54,7 @@ void check_button_is_press(void);
 #define FW_TYPE_ELF 5
 #define FW_TYPE_FACTORY_KERNEL6M 6
 #define FW_TYPE_FACTORY_KERNEL12M 7
+#define FW_TYPE_FIT 8
 
 int check_test(void);
 int check_config(void);

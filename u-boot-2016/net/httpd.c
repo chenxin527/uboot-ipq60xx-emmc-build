@@ -297,6 +297,14 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 			printf("\n\n* Update CDT is NOT supported for this FLASH TYPE yet!! *\n\n");
 			return(-1);
 		}
+	} else if (upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UIMAGE) {
+		printf("\n\n****************************\n*      UIMAGE BOOTING      *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
+		if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_FIT) {
+			sprintf(buf,"bootm 0x%lx", (unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS));
+		} else {
+			printf("\n\n* The upload file is NOT supported uImage!! *\n\n");
+			return(-1);
+		}
 	} else {
 		printf("\n\n* NOT supported WEBFAILSAFE UPGRADE TYPE!! *\n\n");
 		return(-1);

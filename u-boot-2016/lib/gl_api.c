@@ -247,6 +247,8 @@ int check_fw_type(void *address){
 		return FW_TYPE_FACTORY_KERNEL6M;
 	else if (*sign_doodfeed==0xedfe0dd0 && *sign_kernel12m==0x73717368)
 		return FW_TYPE_FACTORY_KERNEL12M;
+	else if (*sign_doodfeed==0xedfe0dd0)
+		return FW_TYPE_FIT;
 	else if (*sign_55aa==0xaa55)
 		return FW_TYPE_EMMC;
 	else if (*sign_cdt==0x00544443)
