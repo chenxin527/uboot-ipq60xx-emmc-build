@@ -113,13 +113,14 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 		if (qca_smem_flash_info.flash_type==5) {
 			//include/gl_api.h
 			//WEBFAILSAFE_UPLOAD_RAM_ADDRESS=0x50000000 为了可以上传更大的固件，将上传地址从0x44000000改为0x50000000避免内存crash重启
-			//FW_TYPE_EMMC	1 这个是GPT文件或者EMMC镜像，只要开头有GPT信息即可
-			//FW_TYPE_QSDK	2 这个是官方原厂固件
-			//FW_TYPE_UBI	3 这个是UBI固件，EMMC没有UBI固件
-			//FW_TYPE_CDT   4 这个是CDT文件
-			//FW_TYPE_ELF   5 这个是U-Boot文件
+			//FW_TYPE_EMMC	            1 这个是GPT文件或者EMMC镜像，只要开头有GPT信息即可
+			//FW_TYPE_QSDK	            2 这个是官方原厂固件
+			//FW_TYPE_UBI	            3 这个是UBI固件，EMMC没有UBI固件
+			//FW_TYPE_CDT               4 这个是CDT文件
+			//FW_TYPE_ELF               5 这个是U-Boot文件
 			//FW_TYPE_FACTORY_KERNEL6M	6 这个是6MB kernel的factory.bin固件
 			//FW_TYPE_FACTORY_KERNEL12M	7 这个是12MB kernel的factory.bin固件
+			//FW_TYPE_FIT               8 这个是FIT Image，包括Factory Image和FIT uImage
 			//check_fw_type 只检查文件的开头几个特殊magic num
 			if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_FACTORY_KERNEL6M) {
 				printf("\n\n******************************\n* FACTORY FIRMWARE UPGRADING *\n* FIRMWARE KERNEL SIZE: 6MB  *\n*  DO NOT POWER OFF DEVICE!  *\n******************************\n\n");
@@ -295,6 +296,14 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 			}
 		} else {
 			printf("\n\n* Update CDT is NOT supported for this FLASH TYPE yet!! *\n\n");
+			return(-1);
+		}
+	} else if (upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UIMAGE) {
+		printf("\n\n****************************\n*      UIMAGE BOOTING      *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
+		if (check_fw_type((void *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS)==FW_TYPE_FIT) {
+			sprintf(buf,"bootm 0x%lx", (unsigned long int)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS));
+		} else {
+			printf("\n\n* The upload file is NOT supported uImage!! *\n\n");
 			return(-1);
 		}
 	} else {
