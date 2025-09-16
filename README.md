@@ -37,10 +37,11 @@ cd uboot-ipq60xx-emmc-build
 
 ## 网址说明
 
-| 功能        | 网址                          |
-| :---------- | :---------------------------- |
-| 更新固件    | http://192.168.1.1            |
-| 更新 ART    | http://192.168.1.1/art.html   |
-| 更新 CDT    | http://192.168.1.1/cdt.html   |
-| 更新 IMG    | http://192.168.1.1/img.html   |
-| 更新 U-Boot | http://192.168.1.1/uboot.html |
+| 功能        | 网址                           |
+| :---------- | :----------------------------- |
+| 更新固件    | http://192.168.1.1             |
+| 更新 ART    | http://192.168.1.1/art.html    |
+| 更新 CDT    | http://192.168.1.1/cdt.html    |
+| 更新 IMG    | http://192.168.1.1/img.html    |
+| 更新 U-Boot | http://192.168.1.1/uboot.html  |
+| 启动 uImage | http://192.168.1.1/uimage.html |
