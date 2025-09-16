@@ -192,11 +192,23 @@ static int httpd_findandstore_firstchunk(void){
 #endif /* if defined(WEBFAILSAFE_DISABLE_CDT_UPGRADE) */
 						} else {
 
-							printf("## Error: input name not found!\n");
-							return(0);
+							end = (char *)strstr((char *)start, "name=\"uImage\"");
 
+							if(end){
+#if defined(WEBFAILSAFE_DISABLE_UIMAGE_BOOT)
+								printf("## Error: uImage booting is not allowed on this board!\n");
+								webfailsafe_upload_failed = 1;
+#else
+								printf("Upgrade type: uImage\n");
+								webfailsafe_upgrade_type = WEBFAILSAFE_UPGRADE_TYPE_UIMAGE;
+#endif /* if defined(WEBFAILSAFE_DISABLE_UIMAGE_BOOT) */
+							} else {
+
+								printf("## Error: input name not found!\n");
+								return(0);
+
+							}
 						}
-
 					}
 				}
 			}

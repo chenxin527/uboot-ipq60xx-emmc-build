@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>uImage 启动</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<div id="m">
+			<h1>uImage 启动</h1>
+			<p>此页面用于将 <strong>FIT uImage</strong> 上传到内存并启动。<br>请选择要启动的 FIT uImage 镜像并点击 <strong>启动 uImage</strong> 按钮。</p>
+			<form method="post" enctype="multipart/form-data"><input type="file" name="uImage"><input type="submit" value="启动 uImage"></form>
+			<div class="i w">
+				<strong>提醒：</strong>
+				<ul>
+					<li><strong>本页面仅支持启动 FIT uImage，不支持启动 Legacy uImage！</strong></li>
+                    <li><strong>文件上传需要时间，点击“启动 uImage”按钮后请耐心等待文件上传，不要刷新或关闭此页面！</strong></li>
+                    <li>你可以上传任何你想要上传的文件，所以请为你的设备选择合适的 uImage 文件！</li>
+                </ul>
+			</div>
+		</div>
+		<div id="f">您可以在 <a href="https://github.com/chenxin527/uboot-ipq60xx-emmc-build" target="_blank">GitHub</a> 上找到有关此项目的详细信息</div>
+        <div id="f">version: 2025.09.16</div>
+	</body>
+</html>
