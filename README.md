@@ -1,3 +1,7 @@
+> [!NOTE]
+>
+> 此项目已不再更新，请移步新项目：https://github.com/chenxin527/uboot-qsdk12.5-build
+
 本仓库修改自：https://github.com/lgs2007m/uboot-ipq60xx-build
 
 u-boot-2016 源代码基于：https://github.com/gl-inet/uboot-ipq60xx
